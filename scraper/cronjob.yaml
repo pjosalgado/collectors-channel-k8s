@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scraper-cronjob
+  namespace: collectors-channel
+spec:
+  schedule: "0 */12 * * *"
+  timeZone: "America/Sao_Paulo"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: collectors-channel-scraper
+            version: "2.4.0"
+          annotations:
+            proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: collectors-channel-scraper
+              image: paulosalgado/collectors-channel-scraper:2.4.0
+              imagePullPolicy: Always
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  ./run-all-spiders.sh;
+                  x=$(echo $?); curl -fsI -X POST http://localhost:15020/quitquitquit && exit $x
+              env:
+                - name: TZ
+                  value: America/Sao_Paulo
+                - name: MONGO_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: shared-secret
+                      key: mongoUrl
+                - name: DISCORD_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: scraper-secret
+                      key: discordUrl
+                - name: INFLUXDB_ORG
+                  valueFrom:
+                    secretKeyRef:
+                      name: influxdb-secret
+                      key: username
+                - name: INFLUXDB_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: influxdb-secret
+                      key: password
+                - name: INFLUXDB_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: influxdb-secret
+                      key: database
+                - name: PAGINATION_ENABLED
+                  valueFrom:
+                    configMapKeyRef:
+                      name: scraper-configmap
+                      key: paginationEnabled
+                - name: NOTIFICATION_DISCOUNT_PERCENTAGE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: scraper-configmap
+                      key: notificationDiscountPercentage
+                - name: INFLUXDB_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: scraper-configmap
+                      key: influxDbUrl

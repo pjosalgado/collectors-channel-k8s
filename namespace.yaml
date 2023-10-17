@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: collectors-channel
+  labels:
+    istio-injection: enabled

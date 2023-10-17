@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scraper-configmap
+  namespace: collectors-channel
+data:
+  paginationEnabled: "True"
+  notificationDiscountPercentage: "20"
+  influxDbUrl: http://influxdb-service:8086

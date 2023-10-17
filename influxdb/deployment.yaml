@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-deployment
+  namespace: collectors-channel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb-deployment
+  template:
+    metadata:
+      labels:
+        app: influxdb-deployment
+        version: "1.8"
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - name: influxdb
+          image: influxdb:1.8
+          ports:
+            - name: http-port
+              containerPort: 8086
+          env:
+            - name: INFLUXDB_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: username
+            - name: INFLUXDB_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: password
+            - name: INFLUXDB_DB
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-secret
+                  key: database
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/influxdb
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: influxdb-persistentvolumeclaim
