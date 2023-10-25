@@ -15,14 +15,14 @@ spec:
         metadata:
           labels:
             app: collectors-channel-scraper
-            version: "2.4.0"
+            version: "2.4.1"
           annotations:
             proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
         spec:
           restartPolicy: Never
           containers:
             - name: collectors-channel-scraper
-              image: paulosalgado/collectors-channel-scraper:2.4.0
+              image: paulosalgado/collectors-channel-scraper:2.4.1
               imagePullPolicy: Always
               command:
                 - /bin/sh
