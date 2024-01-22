@@ -7,4 +7,5 @@ metadata:
 data:
   paginationEnabled: "True"
   notificationDiscountPercentage: "20"
+  notificationRestock: "False"
   influxDbUrl: http://influxdb-service:8086

@@ -15,14 +15,14 @@ spec:
         metadata:
           labels:
             app: collectors-channel-scraper
-            version: "2.4.1"
+            version: "2.5.0"
           annotations:
             proxy.istio.io/config: '{ "holdApplicationUntilProxyStarts": true }'
         spec:
           restartPolicy: Never
           containers:
             - name: collectors-channel-scraper
-              image: paulosalgado/collectors-channel-scraper:2.4.1
+              image: paulosalgado/collectors-channel-scraper:2.5.0
               imagePullPolicy: Always
               command:
                 - /bin/sh
@@ -68,6 +68,11 @@ spec:
                     configMapKeyRef:
                       name: scraper-configmap
                       key: notificationDiscountPercentage
+                - name: NOTIFICATION_RESTOCK
+                  valueFrom:
+                    configMapKeyRef:
+                      name: scraper-configmap
+                      key: notificationRestock
                 - name: INFLUXDB_URL
                   valueFrom:
                     configMapKeyRef:
