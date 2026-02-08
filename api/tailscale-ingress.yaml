@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-tailscale-ingress
+  namespace: collectors-channel
+spec:
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: api-service
+      port:
+        number: 5000
+  tls:
+    - hosts:
+        - api-collectors-channel
